@@ -1,0 +1,236 @@
+/*
+columns = {"columnname1", "columnname2", "columnname3" ... }
+string type
+
+
+
+
+array type
+
+	
+
+[
+{"data" : "columnname1"},
+{"data" : "columnname2"},
+{"data" : "columnname3"},
+.
+.
+.
+]
+*/
+
+// var columnsO
+// columnsO.each(function(index){
+// 	columns[index] = $(this).text();
+// })
+
+
+
+
+
+// columns = ["columnname1", "columnname2", "columnname3" ]
+$(document).ready(function(){
+   $('.lll[data-value="1"]').removeClass('top4');
+   $('.lll[data-value="1"]').addClass('top1');
+   $('.lll[data-value="1"]').html('');
+   $('.lll[data-value="2"]').removeClass('top4');
+   $('.lll[data-value="2"]').addClass('top2');
+   $('.lll[data-value="2"]').html('');
+   $('.lll[data-value="3"]').removeClass('top4');
+   $('.lll[data-value="3"]').addClass('top3');
+   $('.lll[data-value="3"]').html('');
+});
+
+function tablecolumns(columns){
+	var list = new Array();
+	// var test = JSON.stringify(list);
+	$.each(columns, function(x, value){
+		var obj = new Object();
+		obj.data = value;
+		list.push(obj);
+	});
+
+	return list;
+}
+
+//此customer2  是为  企业资产状况信息 做的   资产状况无上一页下一页
+function customtable2 (id ,url ,columns, title){
+	
+	var tableid = '#' + id ;
+	var noDataFound = '暂无' + title + '信息';
+	var columnnames = tablecolumns(columns);
+	var datatablesObj = $(tableid).DataTable({
+		"bAutoWidth": false,
+		"pagingType":   "full_numbers",
+		"language": {
+            "processing": "正在加载，请稍候",
+			"lengthMenu": "",
+			"zeroRecords": noDataFound,
+			"info": " ",
+			"infoEmpty": "",
+			"infoFiltered": "",
+			"infoPostFix": "",
+			"url": "",
+			"paginate": {
+				"first":    "",
+				"previous": "",
+				"next":     "",
+				"last":     ""
+			}
+ 		},
+		"processing" : true,
+		 "ordering":false,
+		"serverSide" : true,
+		"ajax"  : {
+			"url": url ,
+			"type": "POST"
+		},
+		"columns": columnnames,
+		"destroy": true,
+		"columnDefs" : [
+		    {
+		    	"targets" : [0,1,2],
+		    	"render":function(data, x, obj, index, y){
+		    		console.log(data);
+		    		if (data == null) {
+		    			return "";
+		    		} else {
+		    			return data;
+		    		}
+		    	}
+		    }
+		]
+	});
+	return datatablesObj;
+}
+//农专用这个datatables
+function customtableForSfc (id ,url ,columns, title){
+	
+	var tableid = '#' + id ;
+	var noDataFound = '暂无' + title + '信息';
+	var columnnames = tablecolumns(columns);
+	var datatablesObj = $(tableid).DataTable({
+		"bAutoWidth": false,
+		"pagingType":   "full_numbers",
+		"language": {
+            "processing": "正在加载，请稍候",
+			"lengthMenu": "显示 _MENU_ 项结果",
+			"zeroRecords": noDataFound,
+			"info": "共 查询到 _TOTAL_ 条记录    共 _PAGES_ 页 ",
+			"infoEmpty": "共 查询到 0 条记录    共 0 页",
+			"infoFiltered": "(由 _MAX_ 项结果过滤)",
+			"infoPostFix": "",
+			"url": "",
+			"paginate": {
+				"first":    "首页",
+				"previous": "上一页 ",
+				"next":     "下一页",
+				"last":     "末页"
+			}
+ 		},
+		"processing" : true,
+		 "ordering":false,
+		"serverSide" : true,
+		"ajax"  : {
+			"url": url ,
+			"type": "POST"
+		},
+		"columns": columnnames,
+		"destroy": true,
+		"columnDefs" : [
+		    {
+		    	"targets" : [0],
+		    	"render":function(data, x, obj, index, y){
+		    		return index.row + index.settings._iDisplayStart + 1;
+		    	}
+		    }
+		]
+	});
+	return datatablesObj;
+}
+
+
+
+function customtable (id ,url ,columns, title){
+	
+	var tableid = '#' + id ;
+	var noDataFound = '暂无' + title + '信息';
+	var columnnames = tablecolumns(columns);
+	var datatablesObj = $(tableid).DataTable({
+		"bAutoWidth": false,
+		"pagingType":   "full_numbers",
+		"language": {
+            "processing": "正在加载，请稍候",
+			"lengthMenu": "显示 _MENU_ 项结果",
+			"zeroRecords": noDataFound,
+			"info": "共 查询到 _TOTAL_ 条记录    共 _PAGES_ 页 ",
+			"infoEmpty": "共 查询到 0 条记录    共 0 页",
+			"infoFiltered": "(由 _MAX_ 项结果过滤)",
+			"infoPostFix": "",
+			"url": "",
+			"paginate": {
+				"first":    "首页",
+				"previous": "上一页 ",
+				"next":     "下一页",
+				"last":     "末页"
+			}
+ 		},
+		"processing" : true,
+		 "ordering":false,
+		"serverSide" : true,
+		"ajax"  : {
+			"url": url ,
+			"type": "POST"
+		},
+		"columns": columnnames,
+		"destroy": true,
+		"columnDefs" : [
+		    {
+		    	"targets" : [0],
+		    	"render":function(data, x, obj, index, y){
+		    		return index.row + index.settings._iDisplayStart + 1;
+		    	}
+		    }
+		]
+	});
+	return datatablesObj;
+}
+
+$.fn.dataTable.ext.errMode = function(s,h,m){}
+
+$.fn.dataTableExt.oPagination._numbers = function Aa(a, b) {
+        var c = [],
+            c = Mb.numbers_length + 2,
+            d = Math.floor(c / 2);
+        b <= c ? c = X(0, b) : a <= d ? (c = X(0, c - 2), c.push("ellipsis"), c.push(b - 1)) : (a >= b - 1 - d ? c = X(b - (c - 2), b) : (c = X(a - d + 1, a + d - 0), c.push("ellipsis")), c.splice(0, 0, "ellipsis"));
+        c.DT_el = "span";
+        return c }
+
+// function Aa(a, b) {
+//         var c = [],
+//             c = Mb.numbers_length,
+//             d = Math.floor(c / 2);
+//         b <= c ? c = X(0, b) :
+
+//          a <= d ? (c = X(b-1, c - 2), c.push("ellipsis"), c.push(b - 1)) :
+//           (a >= b - 1 - d ? c = X(b - (c - 2), b) : 
+//           	(c = X(a - d + 2, a + d - 1), c.push("ellipsis")), c.splice(0, 0, "ellipsis"));
+//         c.DT_el = "span";
+//         return c 
+//     }
+/*
+a
+b
+c 代表数组
+d 中间那个数
+
+
+*/
+
+// function Aa(a, b) {
+//         var c = [],
+//             c = Mb.numbers_length,
+//             d = Math.floor(c / 2);
+//         b <= c ? c = X(0, b) : a <= d ? (c = X(b-1, c - 2), c.push("ellipsis"), c.push(b - 1)) : (a >= b - 1 - d ? c = X(b - (c - 2), b) : (c = X(a - d + 2, a + d - 1), c.push("ellipsis")), c.splice(0, 0, "ellipsis"));
+//         c.DT_el = "span";
+//         return c }

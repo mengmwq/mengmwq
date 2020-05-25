@@ -1,0 +1,170 @@
+
+var nodenum_gsxt = "999999"; //修改为临时代码
+//var collectUrl_gsxt = "http://fwtj.gsxt.gov.cn";
+var collectUrl_gsxt = "#";
+var sessionId_gsxt = "";
+
+function getSessionId_gsxt() {
+    var c_name = 'JSESSIONID';
+    if (document.cookie.length > 0) {
+        c_start = document.cookie.indexOf(c_name + "=")
+        if (c_start != -1) {
+            c_start = c_start + c_name.length + 1
+            c_end = document.cookie.indexOf(";", c_start)
+            if (c_end == -1)
+                c_end = document.cookie.length
+            return unescape(document.cookie.substring(c_start, c_end));
+        } else {
+            if (sessionId_gsxt == "") {
+                console.log("cookie中部存在sessionId信息，请手动给sessionId_gsxt进行赋值。");
+            }
+            return sessionId_gsxt;
+        }
+    }
+}
+
+function addScriptTag_gsxt(src) {
+    var script = document.createElement('script');
+    script.setAttribute("type", "text/javascript");
+    script.src = src;
+    document.body.appendChild(script);
+}
+
+function getNowFormatDate_gsxt() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+        + " " + date.getHours() + seperator2 + date.getMinutes()
+        + seperator2 + date.getSeconds();
+    return currentdate;
+}
+
+var getReferrer_gsxt=function() {
+    var referrer = '';
+
+    try {
+        referrer = window.top.document.referrer;
+    } catch(e) {
+        if(window.parent) {
+            try {
+                referrer = window.parent.document.referrer;
+            } catch(e2) {
+                referrer = '';
+            }
+        }
+    }
+    if(referrer === '') {
+        referrer = document.referrer;
+    }
+    return referrer;
+};
+
+function t1Collect_gsxt() {
+    var log = {};
+    log.sessionId = getSessionId_gsxt();
+//	log.referer = decToHex(getReferrer_gsxt());
+    log.referer = "";
+    log.host = window.location.host;
+    log.url = window.location.href.replace(window.location.search,"");
+    log.queryString = decToHex(window.location.search);
+//	log.queryString = log.queryString.replace(/&/g, "W3School")
+    log.nodenum = nodenum_gsxt;
+    console.log(log);
+    var param = "{'sessionId':'"+log.sessionId
+        +"','referer':'"+log.referer
+        +"','host':'"+log.host
+        +"','url':'"+log.url
+        +"','queryString':'"+log.queryString
+        +"','nodenum':'"+log.nodenum+"'}";
+    addScriptTag_gsxt(collectUrl_gsxt + "/statistics/collectT1Log?param=" + param);
+}
+
+//window.onload = function() {
+//	sessionId_gsxt = "0619804260462b2f65cd42163a08";
+//	t1Collect_gsxt();
+//	t2Collect_gsxt("", "", "", "东软集团（北京）有限公司", "");
+//	searchKeywordCollect_gsxt("东软集团");
+//	entnameCollect_gsxt("东软集团（北京）有限公司");
+//}
+
+function t1Collect_gsxt() {
+    var log = {};
+    log.sessionId = sessionId_gsxt;
+//      log.referer = decToHex(getReferrer_gsxt());
+    log.referer = document.referrer;
+    log.host = window.location.host;
+    log.url = window.location.href.replace(window.location.search,"");
+    log.queryString = decToHex(window.location.search);
+//      log.queryString = log.queryString.replace(/&/g, "W3School")
+    log.nodenum = nodenum_gsxt;
+    console.log(log);
+    var param = "{'sessionId':'"+log.sessionId
+        +"','referer':'"+log.referer
+        +"','host':'"+log.host
+        +"','url':'"+log.url
+        +"','queryString':'"+log.queryString
+        +"','nodenum':'"+log.nodenum+"'}";
+    //addScriptTag_gsxt(collectUrl_gsxt + "/statistics/collectT1Log?param=" + param);
+    $(document).ready(function(){
+        $.ajax(
+            {url: collectUrl_gsxt + "/statistics/collectT1Log?param=" + param
+//                async:false
+            }
+        );
+    });
+}
+
+function searchKeywordCollect_gsxt(searchkeyword) {
+    var param = "{'SEARCH_KEYWORD':'"+searchkeyword
+        +"','NODENUM':'"+nodenum_gsxt+"'}";
+    addScriptTag_gsxt(collectUrl_gsxt + "/statistics/addSearchLog?param=" + param);
+}
+
+function entnameCollect_gsxt(entname) {
+    var param = "{'ENT_NAME':'"+entname
+        +"','NODENUM':'"+nodenum_gsxt+"'}";
+    addScriptTag_gsxt(collectUrl_gsxt + "/statistics/addDetailLog?param=" + param);
+}
+
+var decToHex = function(str) {
+    if (str == null)
+        return "";
+    if (str == "")
+        return "";
+    var res=[];
+    for(var i=0;i < str.length;i++)
+        res[i]=("00"+str.charCodeAt(i).toString(16)).slice(-4);
+    return "\\u"+res.join("\\u");
+}
+
+//点击图标
+function Link(site_code) {
+    //获取该站点需要纠错页面的url地址
+    var url = getCurrUrl();
+    //跳转至纠错系统填写页面
+    window.open("http://121.43.68.40/exposure/jiucuo.html?site_code=" + site_code + "&url=" + encodeURIComponent(url));
+}
+//获取该站点需要纠错页面的url地址
+function getCurrUrl() {
+    var url = "";
+    if (parent !== window) {
+        try {
+            url = window.top.location.href;
+        } catch (e) {
+            url = window.top.document.referrer;
+        }
+    }
+    if (url.length == 0)
+        url = document.location.href;
+
+    return url;
+}
